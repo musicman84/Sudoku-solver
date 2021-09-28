@@ -10,7 +10,7 @@ class node:
     #                      opt: Possible solution values for the node stored as a list
     #                           note when len(opt)==1 the solution is found at the node
     
-    def __init__(self,node=0,x=0,y=0,block=0,opt=range(1,10)):#note:self is always first argument of a method, the remaining arguments are default values
+    def __init__(self,node=0,x=0,y=0,block=0,opt=range(1,10)):
         self.node=node#define data entries for class and set value as argument
         self.x=x
         self.y=y
@@ -18,19 +18,19 @@ class node:
         self.opt=opt
 
     def setentry(self,sol):
-        self.opt=[int(sol)]#(Good practice - Any modification of a class' data should be done by a method within the same class) 
+        self.opt=[int(sol)]
         
 
     def removeentry(self,number):
-        #This method removes a number from a list, normally use 'remove' standard method but I had problems with it.
-        tempA=self.opt
-        tempB=[]
-        for i in range(0,len(self.opt)):
-            if tempA[i]==number: 
+        #This method removes a number from a list, normally use 'remove' standard method but had problems with it.
+        temp=[]
+        for i in self.opt:
+            if i==number: 
                 pass 
             else: #could have used 'if not' instead
-                tempB.append(tempA[i])            
-        self.opt=tempB
+                temp.append(i)            
+        self.opt=temp
+
 
     def printNode(self):
         #simply prints out the data associated with a node object, used for debugging
@@ -53,8 +53,9 @@ class board:
                 count+=1
                 
     def printBoard(self):#Print current board, for debugging
-        for i in range(len(self.nodes)):
-            self.nodes[i].printNode()
+        for i in self.nodes:
+            i.printNode()
+
 
     def loadBoard(self):#Load in from data file
         import os
@@ -99,15 +100,13 @@ class board:
     #If solution is known it calls cancel function.
     #If progress==False then solve is done on one node only, not a loop
 
-    def solve(self,node=0,progress=True):
+    def solve(self,node=0):
         if len(self.nodes[node].opt)==1:#check that current node is solved
             #print 'solve sent :'+str(self.nodes[node].x)+','+str(self.nodes[node].y)
             self.cancel(self.nodes[node].x, self.nodes[node].y, self.nodes[node].block, self.nodes[node].opt[0])
-            if node<80 and progress:
-                self.solve(node+1)#progress to next node after having done logical cancellation of options.
-        else:
-            if node<80 and progress:
-                self.solve(node+1)#Progress to next node
+
+        if node<80:
+            self.solve(node+1)#Progress to next node
 
     #Cancel method: When known solution is found-> remove the solution as a possible solution for all nodes in the same
     #row, column and block.
@@ -120,7 +119,7 @@ class board:
                     if len(self.nodes[i].opt)>1:# check that the solution isn't already found
                         self.nodes[i].removeentry(value)
                         if len(self.nodes[i].opt)==1:
-                            self.solve(i,False)
+                            self.cancel(self.nodes[i].x, self.nodes[i].y, self.nodes[i].block, self.nodes[i].opt[0])
 
     #If during cancellation process a new known solution is given
     #then the new solution is instantly passed to the solve method, this can start a chain of solve calls.
@@ -225,6 +224,8 @@ solSpace.loadBoard()
 solSpace.solve()
 
         
+
+
 
 
 
