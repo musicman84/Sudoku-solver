@@ -122,7 +122,7 @@ class board:
                             self.cancel(self.nodes[i].x, self.nodes[i].y, self.nodes[i].block, self.nodes[i].opt[0])
 
     #If during cancellation process a new known solution is given
-    #then the new solution is instantly passed to the solve method, this can start a chain of solve calls.
+    #then the new solution is used as the start of a new chain of cancellation calls.
 
     def checkSol(self,solved=True):
         #check each node only has one solution
